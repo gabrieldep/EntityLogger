@@ -25,14 +25,16 @@ namespace AppLogger.Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EntityAttribute>(ael =>
+            modelBuilder.Entity<EntityAttribute>(ea =>
             {
-                ael.HasOne(ael => ael.LogBase)
+                ea.HasKey(ea => ea.Id);
+
+                ea.HasOne(ael => ael.LogBase)
                 .WithMany(ca => ca.EntitiesAttributes)
                 .HasForeignKey(ael => ael.IdLogBase)
                 .HasConstraintName("EntityAttributeLogBaseFKConstraint");
 
-                ael.Property(t => t.Type)
+                ea.Property(t => t.Type)
                   .IsRequired()
                   .HasConversion(
                       convertToProviderExpression: t => t.AssemblyQualifiedName,
@@ -41,6 +43,8 @@ namespace AppLogger.Model
 
             modelBuilder.Entity<LogBase>(lb =>
             {
+                lb.HasKey(lb => lb.Id);
+
                 lb.Property(t => t.EntityType)
                   .IsRequired()
                   .HasConversion(
