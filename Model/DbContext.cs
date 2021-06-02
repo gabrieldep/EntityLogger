@@ -14,6 +14,9 @@ namespace AppLogger.Model
         public DbSet<LogBase> LogsBase { get; set; }
         public DbSet<EntityAttribute> EntitiesAttributes { get; set; }
 
+        public DbContext()
+        {
+        }
 
         public DbContext([NotNull] DbContextOptions options)
             : base(options)
