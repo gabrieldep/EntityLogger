@@ -44,6 +44,7 @@ namespace AppLogger.Controls
                 TipoLog = tipoLog,
                 DataHora = DateTime.Now,
                 EntityType = type,
+                User = _user,
                 EntitiesAttributes = GetListAttributes(antigo, novo, type, tipoLog).ToList()
             };
             await _context.LogsBase.AddAsync(log);

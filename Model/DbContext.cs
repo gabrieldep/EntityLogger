@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using AppLogger.Controls;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AppLogger.Model
 {
@@ -12,6 +13,12 @@ namespace AppLogger.Model
     {
         public DbSet<LogBase> LogsBase { get; set; }
         public DbSet<EntityAttribute> EntitiesAttributes { get; set; }
+
+
+        public DbContext([NotNull] DbContextOptions options)
+            : base(options)
+        {            
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

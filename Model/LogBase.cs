@@ -13,8 +13,7 @@ namespace AppLogger.Model
         public int Id { get; set; }
 
         public DateTime DataHora { get; set; }
-        public string IdIdentity { get; set; }
-        public string EmailIdentity { get; set; }
+        public string User { get; set; }
 
         public ICollection<EntityAttribute> EntitiesAttributes { get; set; }
 
