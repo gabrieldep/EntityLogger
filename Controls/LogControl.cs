@@ -54,9 +54,11 @@ namespace AppLogger.Controls
         /// Trata os dados recebidos em forma de entidade e os devolve em formato de um lista de atributos
         /// </summary>
         /// <returns>Retorna uma lista com os atributos antigos e novos das entidades.</returns>
-        /// <param name="antigo">Entidade original.</param>
-        /// <param name="novo">Entidade nova.</param>
-        public IEnumerable<EntityAttribute> GetListAttributes(object oldObj, object newObj, Type type, Enums.LogType logType)
+        /// <param name="oldObj">Entidade original.</param>
+        /// <param name="newObj">Entidade nova.</param>
+        /// <param name="type">Tipo do objeto.</param>
+        /// <param name="logType">Enum com o tipo log.</param>
+        public static IEnumerable<EntityAttribute> GetListAttributes(object oldObj, object newObj, Type type, Enums.LogType logType)
         {
             IEnumerable<PropertyInfo> properties = type
                 .GetProperties()
@@ -90,10 +92,9 @@ namespace AppLogger.Controls
         /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
         /// <param name="inicio">Data inicial para o registro do log.</param>
         /// <param name="fim">Data final para o registro do log.</param>
-        /// <param name="idIdentity">IdIdentity de quem realizou a ação do Log.</param>
         /// <param name="enumTipoLog">Enum.Tipolog determinando se foi edição, criação ou deleção.</param>
         /// <param name="type">Tipo do objeto que foi alterado.</param>
-        public IEnumerable<LogBase> GetLogBaseList(DateTime inicio, DateTime fim, int enumTipoLog, string type, string user)
+        public IEnumerable<LogBase> GetLogBaseList(DateTime inicio, DateTime fim, int enumTipoLog, string type)
         {
             return _context.LogsBase
                 .Include(lb => lb.EntitiesAttributes)
@@ -101,7 +102,7 @@ namespace AppLogger.Controls
                     (inicio == DateTime.MinValue || lb.DataHora >= inicio)
                     && (fim == DateTime.MinValue || lb.DataHora <= fim)
                     && (enumTipoLog == -1 || lb.TipoLog == (Enums.LogType)enumTipoLog)).ToList()
-                    .Where(lb => string.IsNullOrEmpty(type) ? true : lb.EntityType == Type.GetType(type));
+                    .Where(lb => string.IsNullOrEmpty(type) || lb.EntityType == Type.GetType(type));
         }
 
         /// <summary>
@@ -109,14 +110,13 @@ namespace AppLogger.Controls
         /// </summary>
         /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
         /// <param name="type">Tipo do objeto que foi alterado.</param>
-        /// <param name="idClinica">Id da clinica desse objeto.</param>
         /// <param name="idEntity">Id da entidade que se quer os logs.</param>
         public IEnumerable<LogBase> GetEntityLogBaseList(string type, int idEntity)
         {
             return _context.LogsBase
                 .Include(lb => lb.EntitiesAttributes)
-                .Where(lb => lb.EntitiesAttributes.Any(a => 
-                    a.PropertyName == "Id" || a.PropertyName == "Id" + type 
+                .Where(lb => lb.EntitiesAttributes.Any(a =>
+                    a.PropertyName == "Id" || a.PropertyName == "Id" + type
                     && a.Value == idEntity.ToString()))
                         .ToList()
                         .Where(lb =>
@@ -141,7 +141,6 @@ namespace AppLogger.Controls
                     .GetProperty(atributo.PropertyName)
                     .SetValue(objeto, Convert.ChangeType(atributo.Value, atributo.Type));
             }
-
             return objeto;
         }
     }
