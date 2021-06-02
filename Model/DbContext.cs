@@ -20,7 +20,7 @@ namespace AppLogger.Model
 
         public DbContext([NotNull] DbContextOptions options)
             : base(options)
-        {            
+        {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,8 +32,6 @@ namespace AppLogger.Model
                 .HasForeignKey(ael => ael.IdLogBase)
                 .HasConstraintName("EntityAttributeLogBaseFKConstraint");
 
-                modelBuilder.Ignore<Type>();
-
                 ea.Property(t => t.Type)
                   .IsRequired()
                   .HasConversion(
@@ -43,8 +41,6 @@ namespace AppLogger.Model
 
             modelBuilder.Entity<LogBase>(lb =>
             {
-                modelBuilder.Ignore<Type>();
-
                 lb.Property(t => t.EntityType)
                   .IsRequired()
                   .HasConversion(
