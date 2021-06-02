@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AppLogger.Controls
 {
-    class LogControl
+    public class LogControl
     {
         private readonly Model.DbContext _context;
         private readonly string _user;
