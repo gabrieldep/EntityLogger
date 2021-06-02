@@ -27,12 +27,12 @@ namespace AppLogger.Model
         {
             modelBuilder.Entity<EntityAttribute>(ea =>
             {
-                ea.HasKey(ea => ea.Id);
-
                 ea.HasOne(ael => ael.LogBase)
                 .WithMany(ca => ca.EntitiesAttributes)
                 .HasForeignKey(ael => ael.IdLogBase)
                 .HasConstraintName("EntityAttributeLogBaseFKConstraint");
+
+                modelBuilder.Ignore<Type>();
 
                 ea.Property(t => t.Type)
                   .IsRequired()
@@ -43,7 +43,7 @@ namespace AppLogger.Model
 
             modelBuilder.Entity<LogBase>(lb =>
             {
-                lb.HasKey(lb => lb.Id);
+                modelBuilder.Ignore<Type>();
 
                 lb.Property(t => t.EntityType)
                   .IsRequired()
