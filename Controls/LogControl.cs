@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -26,26 +26,26 @@ namespace AppLogger.Controls
         }
 
         /// <summary>
-        /// Adds log of editing, creating or deleting an entity.
+        /// Adiciona Log de edição, criação ou deleção de uma entidade
         /// </summary>
-        /// <param name="tipoLog">Enum LogType.</param>
-        /// <param name="changeInfo">EntityEntry with change tracking information.</param>
+        /// <param name="tipoLog">Define se o log é de edição, criação ou deleção.</param>
+        /// <param name="changeInfo">Variavel que contém informações sobre a alteração.</param>
         public async Task AddLogAsync(Enums.LogType tipoLog, EntityEntry changeInfo)
         {
-            object oldObj =
-            tipoLog != Enums.LogType.Create ?
-                changeInfo.GetDatabaseValues().ToObject()
-                : null;
-            object newObj = changeInfo.CurrentValues.ToObject();
+            object antigo =
+                tipoLog != Enums.LogType.Create ?
+                    changeInfo.GetDatabaseValues().ToObject()
+                    : null;
+            object novo = changeInfo.CurrentValues.ToObject();
             Type type = changeInfo.Entity.GetType();
 
             LogBase log = new()
             {
                 TipoLog = tipoLog,
-                DateTime = DateTime.Now,
+                DataHora = DateTime.Now,
                 EntityType = type,
                 User = _user,
-                EntitiesAttributes = GetListAttributes(oldObj, newObj, type, tipoLog).ToList()
+                EntitiesAttributes = GetListAttributes(antigo, novo, type, tipoLog).ToList()
             };
             await _context.LogsBase.AddAsync(log);
         }
@@ -54,32 +54,32 @@ namespace AppLogger.Controls
         /// Trata os dados recebidos em forma de entidade e os devolve em formato de um lista de atributos
         /// </summary>
         /// <returns>Retorna uma lista com os atributos antigos e novos das entidades.</returns>
-        /// <param name="oldObj">Original entity.</param>
-        /// <param name="newObj">New entity.</param>
-        /// <param name="type">Object type.</param>
-        /// <param name="logType">Enum LogType.</param>
+        /// <param name="oldObj">Entidade original.</param>
+        /// <param name="newObj">Entidade nova.</param>
+        /// <param name="type">Tipo do objeto.</param>
+        /// <param name="logType">Enum com o tipo log.</param>
         public static IEnumerable<EntityAttribute> GetListAttributes(object oldObj, object newObj, Type type, Enums.LogType logType)
         {
             IEnumerable<PropertyInfo> properties = type
                 .GetProperties()
                 .Where(p => p.PropertyType.Namespace == "System");
 
-            IList<EntityAttribute> EntitiesAttributes = logType != Enums.LogType.Create ?
+            IList<EntityAttribute> AtributosEntidadeLogNovo = logType != Enums.LogType.Create ?
                 properties
                     .Select(p => new EntityAttribute
                     {
-                        EntityType = Enums.EntityType.Old,
+                        TipoEntidade = Enums.EntityType.Old,
                         Type = p.PropertyType,
                         PropertyName = p.Name,
                         Value = p.GetValue(oldObj)?.ToString()
                     }).ToList() : new List<EntityAttribute>();
 
             return logType == Enums.LogType.Delete ?
-                EntitiesAttributes :
-                    EntitiesAttributes.Union(properties
+                AtributosEntidadeLogNovo :
+                    AtributosEntidadeLogNovo.Union(properties
                         .Select(p => new EntityAttribute
                         {
-                            EntityType = Enums.EntityType.New,
+                            TipoEntidade = Enums.EntityType.New,
                             Type = p.PropertyType,
                             PropertyName = p.Name,
                             Value = p.GetValue(newObj)?.ToString()
@@ -90,18 +90,18 @@ namespace AppLogger.Controls
         /// Lista de Logs baseada nos parametros
         /// </summary>
         /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
-        /// <param name="start">Start date time.</param>
-        /// <param name="end">End date time.</param>
-        /// <param name="enumLogType">Enum LogType.</param>
-        /// <param name="type">Entity type name.</param>
-        public IEnumerable<LogBase> GetLogBaseList(DateTime start, DateTime end, int enumLogType, string type)
+        /// <param name="inicio">Data inicial para o registro do log.</param>
+        /// <param name="fim">Data final para o registro do log.</param>
+        /// <param name="enumTipoLog">Enum.Tipolog determinando se foi edição, criação ou deleção.</param>
+        /// <param name="type">Tipo do objeto que foi alterado.</param>
+        public IEnumerable<LogBase> GetLogBaseList(DateTime inicio, DateTime fim, int enumTipoLog, string type)
         {
             return _context.LogsBase
                 .Include(lb => lb.EntitiesAttributes)
                 .Where(lb =>
-                    (start == DateTime.MinValue || lb.DateTime >= start)
-                    && (end == DateTime.MinValue || lb.DateTime <= end)
-                    && (enumLogType == -1 || lb.TipoLog == (Enums.LogType)enumLogType)).ToList()
+                    (inicio == DateTime.MinValue || lb.DataHora >= inicio)
+                    && (fim == DateTime.MinValue || lb.DataHora <= fim)
+                    && (enumTipoLog == -1 || lb.TipoLog == (Enums.LogType)enumTipoLog)).ToList()
                     .Where(lb => string.IsNullOrEmpty(type) || lb.EntityType == Type.GetType(type));
         }
 
@@ -109,8 +109,8 @@ namespace AppLogger.Controls
         /// Lista de Logs de um determinado Objeto do banco de dados
         /// </summary>
         /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
-        /// <param name="type">Entity type name.</param>
-        /// <param name="idEntity">Entity Id.</param>
+        /// <param name="type">Tipo do objeto que foi alterado.</param>
+        /// <param name="idEntity">Id da entidade que se quer os logs.</param>
         public IEnumerable<LogBase> GetEntityLogBaseList(string type, int idEntity)
         {
             return _context.LogsBase
@@ -126,22 +126,22 @@ namespace AppLogger.Controls
         /// <summary>
         /// Cria o objeto do tipo T a partir do log.
         /// </summary>
-        /// <param name="logBase">LogBase to reconstruct the objetct.</param>
-        /// <param name="entityType">Enum EntityType.</param>
-        /// <param name="objectT">Object to be reconstruct.</param>
-        public static T CreateEntity<T>(LogBase logBase, Enums.EntityType entityType, T objectT)
+        /// <param name="logBase">Logbase no qual deve se pegar os atributos para construir o objeto.</param>
+        /// <param name="tipoEntidade">Enum para saber se objeto solicitado é o novo ou o antigo.</param>
+        /// <param name="objeto">Objeto a ser construido passado por referencia.</param>
+        public static T CreateEntity<T>(LogBase logBase, Enums.EntityType tipoEntidade, T objeto)
         {
             List<EntityAttribute> atributos = logBase.EntitiesAttributes
-                .Where(a => a.EntityType == entityType)
+                .Where(a => a.TipoEntidade == tipoEntidade)
                 .ToList();
-            foreach (var attribute in atributos)
+            foreach (var atributo in atributos)
             {
-                objectT
+                objeto
                     .GetType()
-                    .GetProperty(attribute.PropertyName)
-                    .SetValue(objectT, Convert.ChangeType(attribute.Value, attribute.Type));
+                    .GetProperty(atributo.PropertyName)
+                    .SetValue(objeto, Convert.ChangeType(atributo.Value, atributo.Type));
             }
-            return objectT;
+            return objeto;
         }
     }
 }
