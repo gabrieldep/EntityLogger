@@ -12,13 +12,13 @@ namespace AppLogger.Model
         }
         public int Id { get; set; }
 
-        public DateTime DataHora { get; set; }
+        public DateTime DateTime { get; set; }
         public string User { get; set; }
 
         public ICollection<EntityAttribute> EntitiesAttributes { get; set; }
 
         public Type EntityType { get; set; }
 
-        public Enums.LogType TipoLog { get; set; }
+        public Enums.LogType LogType { get; set; }
     }   
 }
