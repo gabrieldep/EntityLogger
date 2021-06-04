@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>EntityLogger</PackageId>
-    <Version>1.0.8</Version>
+    <Version>1.0.9</Version>
     <Authors>Gabriel de Paula Silva</Authors>
     <Company>Por minha conta :)</Company>
     <TargetFramework>net5.0</TargetFramework>

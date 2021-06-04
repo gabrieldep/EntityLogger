@@ -6,7 +6,7 @@ namespace AppLogger.Model
     {
         public int Id { get; set; }
 
-        public Enums.EntityType TipoEntidade { get; set; }
+        public Enums.EntityType EntityType { get; set; }
 
         public Type Type { get; set; }
         public string PropertyName { get; set; }
