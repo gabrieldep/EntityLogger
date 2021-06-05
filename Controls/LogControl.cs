@@ -65,7 +65,7 @@ namespace AppLogger.Controls
                 .GetProperties()
                 .Where(p => p.PropertyType.Namespace == "System");
 
-            IList<EntityAttribute> EntitiesAttributes = logType != Enums.LogType.Create ?
+            IEnumerable<EntityAttribute> EntitiesAttributes = logType != Enums.LogType.Create ?
                 properties
                     .Select(p => new EntityAttribute
                     {

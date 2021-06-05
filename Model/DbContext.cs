@@ -51,7 +51,7 @@ namespace AppLogger.Model
 
         public async Task<int> SaveChangesAsync(string user)
         {
-            IList<EntityEntry> changesInfo = ChangeTracker
+            IEnumerable<EntityEntry> changesInfo = ChangeTracker
                 .Entries()
                 .Where(t =>
                     t.State == EntityState.Modified
