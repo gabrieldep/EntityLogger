@@ -132,9 +132,8 @@ namespace AppLogger.Controls
         /// <param name="objectT">Object to be reconstruct.</param>
         public static T CreateEntity<T>(LogBase logBase, Enums.EntityType entityType, T objectT)
         {
-            List<EntityAttribute> attributes = logBase.EntitiesAttributes
-                .Where(a => a.EntityType == entityType)
-                .ToList();
+            IEnumerable<EntityAttribute> attributes = logBase.EntitiesAttributes
+                .Where(a => a.EntityType == entityType);
             foreach (EntityAttribute attribute in attributes)
             {
                 objectT
