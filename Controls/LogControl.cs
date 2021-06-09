@@ -1,8 +1,8 @@
 ﻿using AppLogger.Model;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -30,10 +30,10 @@ namespace AppLogger.Controls
         /// </summary>
         /// <param name="logType">Enum LogType.</param>
         /// <param name="changeInfo">EntityEntry with change tracking information.</param>
-        public async Task AddLogAsync(Enums.LogType logType, EntityEntry changeInfo)
+        public async Task AddLogAsync(EntityState logType, EntityEntry changeInfo)
         {
             object oldObj =
-                logType != Enums.LogType.Create ?
+                logType != EntityState.Added ?
                     changeInfo.GetDatabaseValues().ToObject()
                     : null;
             object newObj = changeInfo.CurrentValues.ToObject();
@@ -41,7 +41,7 @@ namespace AppLogger.Controls
 
             LogBase log = new()
             {
-                LogType = logType,
+                EntityLogState = logType,
                 DateTime = DateTime.Now,
                 EntityType = type,
                 User = _user,
@@ -59,13 +59,13 @@ namespace AppLogger.Controls
         /// <param name="newObj">New entity.</param>
         /// <param name="type">Object type.</param>
         /// <param name="logType">Enum LogType.</param>
-        public static IEnumerable<EntityAttribute> GetListAttributes(object oldObj, object newObj, Type type, Enums.LogType logType)
+        public static IEnumerable<EntityAttribute> GetListAttributes(object oldObj, object newObj, Type type, EntityState entityState)
         {
             IEnumerable<PropertyInfo> properties = type
                 .GetProperties()
                 .Where(p => p.PropertyType.Namespace == "System");
 
-            IEnumerable<EntityAttribute> EntitiesAttributes = logType != Enums.LogType.Create ?
+            IEnumerable<EntityAttribute> EntitiesAttributes = entityState != EntityState.Added ?
                 properties
                     .Select(p => new EntityAttribute
                     {
@@ -75,7 +75,7 @@ namespace AppLogger.Controls
                         Value = p.GetValue(oldObj)?.ToString()
                     }).ToList() : new List<EntityAttribute>();
 
-            return logType == Enums.LogType.Delete ?
+            return entityState == EntityState.Deleted ?
                 EntitiesAttributes :
                     EntitiesAttributes.Union(properties
                         .Select(p => new EntityAttribute
@@ -95,14 +95,14 @@ namespace AppLogger.Controls
         /// <param name="end">End date time.</param>
         /// <param name="enumTipoLog">Enum LogType.</param>
         /// <param name="type">Entity type name.</param>
-        public IEnumerable<LogBase> GetLogBaseList(DateTime start, DateTime end, int enumTipoLog, string type)
+        public IEnumerable<LogBase> GetLogBaseList(DateTime start, DateTime end, int enumEntityState, string type)
         {
             return _context.LogsBase
                 .Include(lb => lb.EntitiesAttributes)
                 .Where(lb =>
                     (start == DateTime.MinValue || lb.DateTime >= start)
                     && (end == DateTime.MinValue || lb.DateTime <= end)
-                    && (enumTipoLog == -1 || lb.LogType == (Enums.LogType)enumTipoLog)).ToList()
+                    && (enumEntityState == -1 || lb.EntityLogState == (EntityState)enumEntityState)).ToList()
                     .Where(lb => string.IsNullOrEmpty(type) || lb.EntityType == Type.GetType(type));
         }
 

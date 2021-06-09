@@ -1,4 +1,5 @@
 ﻿using AppLogger.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
@@ -19,6 +20,6 @@ namespace AppLogger.Model
 
         public Type EntityType { get; set; }
 
-        public Enums.LogType LogType { get; set; }
+        public EntityState EntityLogState { get; set; }
     }   
 }

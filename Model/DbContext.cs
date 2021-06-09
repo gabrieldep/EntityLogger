@@ -61,13 +61,8 @@ namespace AppLogger.Model
 
             foreach (var item in changesInfo)
             {
-                LogControl control = new (this, user);
-                if (item.State == EntityState.Modified)
-                    await control.AddLogAsync(Enums.LogType.Edit, item);
-                else if (item.State == EntityState.Deleted)
-                    await control.AddLogAsync(Enums.LogType.Delete, item);
-                else if (item.State == EntityState.Added)
-                    await control.AddLogAsync(Enums.LogType.Create, item);
+                LogControl control = new(this, user);
+                await control.AddLogAsync(item.State, item);
             }
             return await base.SaveChangesAsync();
         }
