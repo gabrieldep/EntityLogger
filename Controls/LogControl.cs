@@ -130,7 +130,7 @@ namespace AppLogger.Controls
         /// <param name="logBase">LogBase to reconstruct the objetct.</param>
         /// <param name="entityType">Enum EntityType.</param>
         /// <param name="objectT">Object to be reconstruct.</param>
-        public static T CreateEntity<T>(LogBase logBase, Enums.EntityType entityType, T objectT)
+        public static void CreateEntity<T>(LogBase logBase, Enums.EntityType entityType, ref T objectT)
         {
             IEnumerable<EntityAttribute> attributes = logBase.EntitiesAttributes
                 .Where(a => a.EntityType == entityType);
@@ -141,7 +141,6 @@ namespace AppLogger.Controls
                     .GetProperty(attribute.PropertyName)
                     .SetValue(objectT, Convert.ChangeType(attribute.Value, attribute.Type));
             }
-            return objectT;
         }
     }
 }
