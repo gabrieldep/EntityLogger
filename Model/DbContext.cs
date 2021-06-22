@@ -54,14 +54,13 @@ namespace AppLogger.Model
             IEnumerable<EntityEntry> changesInfo = ChangeTracker
                 .Entries()
                 .Where(t =>
-                    t.State == EntityState.Modified
-                    || t.State == EntityState.Deleted
-                    || t.State == EntityState.Added)
-                .ToList();
+                    t.State == EntityState.Modified || 
+                    t.State == EntityState.Deleted  || 
+                    t.State == EntityState.Added);
 
-            foreach (var item in changesInfo)
+            LogControl control = new(this, user);
+            foreach (EntityEntry item in changesInfo)
             {
-                LogControl control = new(this, user);
                 await control.AddLogAsync(item.State, item);
             }
             return await base.SaveChangesAsync();
