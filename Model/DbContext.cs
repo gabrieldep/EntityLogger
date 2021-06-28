@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using AppLogger.Controls;
 using System.Diagnostics.CodeAnalysis;
-using System.Collections.ObjectModel;
 
 namespace AppLogger.Model
 {
