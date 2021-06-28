@@ -58,7 +58,6 @@ namespace AppLogger.Model
                      t.State == EntityState.Modified ||
                      t.State == EntityState.Deleted ||
                      t.State == EntityState.Added).ToList().AsReadOnly());
-
             return await base.SaveChangesAsync();
         }
     }
