@@ -30,8 +30,9 @@ namespace AppLogger.Controls
         /// </summary>
         /// <param name="logType">Enum LogType.</param>
         /// <param name="changeInfo">EntityEntry with change tracking information.</param>
-        public async Task AddLogAsync(EntityState logType, EntityEntry changeInfo)
+        public async Task AddLogAsync(EntityEntry changeInfo)
         {
+            EntityState logType = changeInfo.State;
             object oldObj =
                 logType != EntityState.Added ?
                     changeInfo.GetDatabaseValues().ToObject()
@@ -141,6 +142,11 @@ namespace AppLogger.Controls
                     .GetProperty(attribute.PropertyName)
                     .SetValue(objectT, Convert.ChangeType(attribute.Value, attribute.Type));
             }
+        }
+
+        public static int GetIdCreate(int id)
+        {
+            return id;
         }
     }
 }

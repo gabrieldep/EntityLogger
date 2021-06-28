@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>EntityLogger</PackageId>
-    <Version>1.1.3</Version>
+    <Version>1.1.4</Version>
     <Authors>Gabriel de Paula Silva</Authors>
     <Company>Por minha conta :)</Company>
 	<Description>Nuget package to log editing, creating and deleting database entities automatically.</Description>
