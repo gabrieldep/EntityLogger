@@ -126,10 +126,7 @@ namespace AppLogger.Controls
                 .Include(lb => lb.EntitiesAttributes)
                 .Where(lb => lb.EntitiesAttributes.Any(a =>
                     a.PropertyName == "Id" || a.PropertyName == "Id" + type
-                    && a.Value == idEntity.ToString()))
-                        .ToList()
-                        .Where(lb =>
-                            string.IsNullOrEmpty(type) || lb.EntityType == Type.GetType(type));
+                    && a.Value == idEntity.ToString()));
         }
 
         /// <summary>
