@@ -57,7 +57,8 @@ namespace AppLogger.Model
                  .Where(t =>
                      t.State == EntityState.Modified ||
                      t.State == EntityState.Deleted ||
-                     t.State == EntityState.Added).ToList().AsReadOnly());
+                     t.State == EntityState.Added)
+                 .ToList().AsReadOnly());
             return await base.SaveChangesAsync();
         }
     }
