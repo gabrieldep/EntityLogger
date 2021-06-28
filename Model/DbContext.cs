@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using AppLogger.Controls;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.ObjectModel;
 
 namespace AppLogger.Model
 {
@@ -51,18 +52,13 @@ namespace AppLogger.Model
 
         public async Task<int> SaveChangesAsync(string user)
         {
-            IEnumerable<EntityEntry> changesInfo = ChangeTracker
-                .Entries()
-                .Where(t =>
-                    t.State == EntityState.Modified ||
-                    t.State == EntityState.Deleted ||
-                    t.State == EntityState.Added);
+            await new LogControl(this, user).AddLogsAsync(ChangeTracker
+                 .Entries()
+                 .Where(t =>
+                     t.State == EntityState.Modified ||
+                     t.State == EntityState.Deleted ||
+                     t.State == EntityState.Added));
 
-            LogControl control = new(this, user);
-            foreach (EntityEntry item in changesInfo)
-            {
-                await control.AddLogAsync(item);
-            }
             return await base.SaveChangesAsync();
         }
     }

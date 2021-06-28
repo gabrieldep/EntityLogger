@@ -25,10 +25,17 @@ namespace AppLogger.Controls
             _context = contexto;
         }
 
+        public async Task AddLogsAsync(IEnumerable<EntityEntry> entityEntries)
+        {
+            foreach (EntityEntry entityEntry in entityEntries)
+            {
+                await AddLogAsync(entityEntry);
+            }
+        } 
+
         /// <summary>
         /// Adds log of editing, creating or deleting an entity.
         /// </summary>
-        /// <param name="logType">Enum LogType.</param>
         /// <param name="changeInfo">EntityEntry with change tracking information.</param>
         public async Task AddLogAsync(EntityEntry changeInfo)
         {
@@ -142,11 +149,6 @@ namespace AppLogger.Controls
                     .GetProperty(attribute.PropertyName)
                     .SetValue(objectT, Convert.ChangeType(attribute.Value, attribute.Type));
             }
-        }
-
-        public static int GetIdCreate(int id)
-        {
-            return id;
         }
     }
 }
