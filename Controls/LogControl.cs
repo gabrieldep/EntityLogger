@@ -25,6 +25,10 @@ namespace AppLogger.Controls
             _context = contexto;
         }
 
+        /// <summary>
+        /// Adds logs of editing, creating or deleting entities.
+        /// </summary>
+        /// <param name="entityEntries">EntityEntry list with change tracking information.</param>
         public async Task AddLogsAsync(IEnumerable<EntityEntry> entityEntries)
         {
             foreach (EntityEntry entityEntry in entityEntries)
