@@ -121,9 +121,9 @@ namespace AppLogger.Controls
         /// <summary>
         /// Lista de Logs de um determinado Objeto do banco de dados
         /// </summary>
-        /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
         /// <param name="type">Entity type name.</param>
         /// <param name="idEntity">Entity Id.</param>
+        /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
         public IEnumerable<LogBase> GetEntityLogBaseList(string type, int idEntity)
         {
             return _context.LogsBase
