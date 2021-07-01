@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using AppLogger.Controls;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 
 namespace AppLogger.Model
 {
@@ -57,13 +58,14 @@ namespace AppLogger.Model
         /// <returns> A task that represents the asynchronous save operation. The task result contains the number of state entries written to the database.</returns>
         public async Task<int> SaveChangesAsync(string user)
         {
-            await new LogControl(this, user).AddLogsAsync(ChangeTracker
+            IReadOnlyCollection<EntityEntry> entries = ChangeTracker
                  .Entries()
                  .Where(t =>
                      t.State == EntityState.Modified ||
                      t.State == EntityState.Deleted ||
                      t.State == EntityState.Added)
-                 .ToList().AsReadOnly());
+                 .ToList().AsReadOnly();
+            await new LogControl(this, user).AddLogsAsync(entries);
             return await base.SaveChangesAsync();
         }
     }
