@@ -14,15 +14,15 @@ namespace AppLogger.Controls
         private readonly Model.DbContext _context;
         private readonly string _user;
 
-        public LogControl(Model.DbContext contexto, string user)
+        public LogControl(Model.DbContext context, string user)
         {
-            _context = contexto;
+            _context = context;
             _user = user;
         }
 
-        public LogControl(Model.DbContext contexto)
+        public LogControl(Model.DbContext context)
         {
-            _context = contexto;
+            _context = context;
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace AppLogger.Controls
             {
                 await AddLogAsync(entityEntry);
             }
-        } 
+        }
 
         /// <summary>
         /// Adds log of editing, creating or deleting an entity.
@@ -70,14 +70,14 @@ namespace AppLogger.Controls
         /// <param name="oldObj">Original entity.</param>
         /// <param name="newObj">New entity.</param>
         /// <param name="type">Object type.</param>
-        /// <param name="logType">Enum LogType.</param>
+        /// <param name="entityState">Enum LogType.</param>
         public static IEnumerable<EntityAttribute> GetListAttributes(object oldObj, object newObj, Type type, EntityState entityState)
         {
             IEnumerable<PropertyInfo> properties = type
                 .GetProperties()
                 .Where(p => p.PropertyType.Namespace == "System");
 
-            IEnumerable<EntityAttribute> EntitiesAttributes = entityState != EntityState.Added ?
+            IEnumerable<EntityAttribute> entitiesAttributes = entityState != EntityState.Added ?
                 properties
                     .Select(p => new EntityAttribute
                     {
@@ -88,8 +88,8 @@ namespace AppLogger.Controls
                     }).ToList() : new List<EntityAttribute>();
 
             return entityState == EntityState.Deleted ?
-                EntitiesAttributes :
-                    EntitiesAttributes.Union(properties
+                entitiesAttributes :
+                    entitiesAttributes.Union(properties
                         .Select(p => new EntityAttribute
                         {
                             EntityType = Enums.EntityType.New,
@@ -105,7 +105,7 @@ namespace AppLogger.Controls
         /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
         /// <param name="start">Start date time.</param>
         /// <param name="end">End date time.</param>
-        /// <param name="enumTipoLog">Enum LogType.</param>
+        /// <param name="enumEntityState">Enum LogType.</param>
         /// <param name="type">Entity type name.</param>
         public IEnumerable<LogBase> GetLogBaseList(DateTime start, DateTime end, int enumEntityState, string type)
         {
