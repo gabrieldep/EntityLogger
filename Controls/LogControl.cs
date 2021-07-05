@@ -63,7 +63,8 @@ namespace AppLogger.Controls
         /// Trata os dados recebidos em forma de entidade e os devolve em formato de um lista de atributos
         /// </summary>
         /// <returns>Retorna uma lista com os atributos antigos e novos das entidades.</returns>
-        /// <param name="objects">Original entity.</param>
+        /// <param name="objects">Array wiht objects to get the EntityAttributes.</param>
+        /// <exception cref="DifferentObjectsTypeException">Se o Array tiver dois objetos com tipos diferentes.</exception>
         public static IEnumerable<EntityAttribute> GetListAttributes(params object[] objects)
         {
             if (!objects.All(o => o.GetType() == objects.First().GetType()))
