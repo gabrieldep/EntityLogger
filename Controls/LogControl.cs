@@ -56,7 +56,8 @@ namespace AppLogger.Controls
                 DateTime = DateTime.Now,
                 EntityType = type,
                 User = _user,
-                EntitiesAttributes = GetListAttributes(oldObj, newObj, type, logType).ToList(),
+                EntitiesAttributes = (oldObj == null ? 
+                        GetListAttributes(type, newObj) : GetListAttributes(type, newObj, oldObj)).ToList(),
                 ForeignKey = _context.GetForeingKey(newObj ?? oldObj)
             };
             await _context.LogsBase.AddAsync(log);
@@ -67,36 +68,28 @@ namespace AppLogger.Controls
         /// Trata os dados recebidos em forma de entidade e os devolve em formato de um lista de atributos
         /// </summary>
         /// <returns>Retorna uma lista com os atributos antigos e novos das entidades.</returns>
-        /// <param name="oldObj">Original entity.</param>
-        /// <param name="newObj">New entity.</param>
         /// <param name="type">Object type.</param>
-        /// <param name="entityState">Enum LogType.</param>
-        public static IEnumerable<EntityAttribute> GetListAttributes(object oldObj, object newObj, Type type, EntityState entityState)
+        /// <param name="objects">Original entity.</param>
+        public static IEnumerable<EntityAttribute> GetListAttributes(Type type, params object[] objects)
         {
             IEnumerable<PropertyInfo> properties = type
                 .GetProperties()
                 .Where(p => p.PropertyType.Namespace == "System");
 
-            IEnumerable<EntityAttribute> entitiesAttributes = entityState != EntityState.Added ?
-                properties
-                    .Select(p => new EntityAttribute
-                    {
-                        EntityType = Enums.EntityType.Old,
-                        Type = p.PropertyType,
-                        PropertyName = p.Name,
-                        Value = p.GetValue(oldObj)?.ToString()
-                    }).ToList() : new List<EntityAttribute>();
+            List<EntityAttribute> entitiesAttributes = new();
 
-            return entityState == EntityState.Deleted ?
-                entitiesAttributes :
-                    entitiesAttributes.Union(properties
-                        .Select(p => new EntityAttribute
-                        {
-                            EntityType = Enums.EntityType.New,
-                            Type = p.PropertyType,
-                            PropertyName = p.Name,
-                            Value = p.GetValue(newObj)?.ToString()
-                        })).ToList();
+            foreach (object obj in objects)
+            {
+                entitiesAttributes.AddRange(properties
+                   .Select(p => new EntityAttribute
+                   {
+                       EntityType = Enums.EntityType.Old,
+                       Type = p.PropertyType,
+                       PropertyName = p.Name,
+                       Value = p.GetValue(obj)?.ToString()
+                   }).ToList());
+            }
+            return entitiesAttributes;
         }
 
         /// <summary>
