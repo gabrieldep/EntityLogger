@@ -89,8 +89,8 @@ namespace AppLogger.Model
             return Model
                 .FindEntityType(obj.GetType())
                 .FindPrimaryKey().Properties
-                .Select(x => x.Name)
-                .Single();
+                .Select(p => p.Name)
+                .SingleOrDefault();
         }
     }
 }
