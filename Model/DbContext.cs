@@ -68,5 +68,29 @@ namespace AppLogger.Model
             await new LogControl(this, user).AddLogsAsync(entries);
             return await base.SaveChangesAsync();
         }
+
+        /// <summary>
+        /// Pegar chave estrangeira
+        /// </summary>
+        /// <param name="obj">Object to get the foreing key.</param>
+        public int GetForeingKey(object obj)
+        {
+            return (int)obj.GetType()
+                .GetProperty(GetForeingKeyName(obj))
+                .GetValue(obj, null);
+        }
+
+        /// <summary>
+        /// Pegar nome da chave estrangeira
+        /// </summary>
+        /// <param name="obj">Object to get the foreing key name.</param>
+        public string GetForeingKeyName(object obj)
+        {
+            return Model
+                .FindEntityType(obj.GetType())
+                .FindPrimaryKey().Properties
+                .Select(x => x.Name)
+                .Single();
+        }
     }
 }
