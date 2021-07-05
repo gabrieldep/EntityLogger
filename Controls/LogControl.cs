@@ -20,11 +20,6 @@ namespace AppLogger.Controls
             _user = user;
         }
 
-        public LogControl(Model.DbContext context)
-        {
-            _context = context;
-        }
-
         /// <summary>
         /// Adds logs of editing, creating or deleting entities.
         /// </summary>
@@ -62,7 +57,6 @@ namespace AppLogger.Controls
             };
             await _context.LogsBase.AddAsync(log);
         }
-
 
         /// <summary>
         /// Trata os dados recebidos em forma de entidade e os devolve em formato de um lista de atributos
@@ -111,6 +105,5 @@ namespace AppLogger.Controls
         {
             return entityEntry.CurrentValues.ToObject();
         }
-
     }
 }
