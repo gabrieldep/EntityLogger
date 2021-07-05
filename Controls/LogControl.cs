@@ -81,7 +81,7 @@ namespace AppLogger.Controls
                        Type = p.PropertyType,
                        PropertyName = p.Name,
                        Value = p.GetValue(obj)?.ToString()
-                   }).ToList());
+                   }));
             }
             return entitiesAttributes;
         }
