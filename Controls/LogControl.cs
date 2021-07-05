@@ -57,7 +57,8 @@ namespace AppLogger.Controls
                 DateTime = DateTime.Now,
                 EntityType = type,
                 User = _user,
-                EntitiesAttributes = GetListAttributes(oldObj, newObj, type, logType).ToList()
+                EntitiesAttributes = GetListAttributes(oldObj, newObj, type, logType).ToList(),
+                ForeignKey = GetForeingKey(oldObj ?? newObj)
             };
             await _context.LogsBase.AddAsync(log);
         }
@@ -150,6 +151,23 @@ namespace AppLogger.Controls
                     .GetProperty(attribute.PropertyName)
                     .SetValue(objectT, Convert.ChangeType(attribute.Value, attribute.Type));
             }
+        }
+
+        /// <summary>
+        /// Pegar chave estrangeira
+        /// </summary>
+        /// <param name="obj">Object to get the foreing key.</param>
+        public int GetForeingKey(object obj)
+        {
+            string keyName = _context.Model
+                .FindEntityType(obj.GetType())
+                .FindPrimaryKey().Properties
+                .Select(x => x.Name)
+                .Single();
+
+            return (int)obj.GetType()
+                .GetProperty(keyName)
+                .GetValue(obj, null);
         }
     }
 }
