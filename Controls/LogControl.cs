@@ -68,7 +68,7 @@ namespace AppLogger.Controls
         {
             if (!objects.All(o => o.GetType() == objects.First().GetType()))
             {
-                throw new DifferentObjectsTypeException();
+                throw new DifferentObjectsTypeException("There are objects with different types in the array.");
             }
 
             IEnumerable<PropertyInfo> properties = objects.First().GetType()
