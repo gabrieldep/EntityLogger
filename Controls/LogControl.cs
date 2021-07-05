@@ -1,4 +1,5 @@
-﻿using AppLogger.Model;
+﻿using AppLogger.Exceptions;
+using AppLogger.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -51,8 +52,8 @@ namespace AppLogger.Controls
                 DateTime = DateTime.Now,
                 EntityType = type,
                 User = _user,
-                EntitiesAttributes = (oldObj == null ? 
-                        GetListAttributes(type, newObj) : GetListAttributes(type, newObj, oldObj)).ToList(),
+                EntitiesAttributes = (oldObj == null ?
+                        GetListAttributes(newObj) : GetListAttributes(newObj, oldObj)).ToList(),
                 ForeignKey = _context.GetForeingKey(newObj ?? oldObj)
             };
             await _context.LogsBase.AddAsync(log);
@@ -62,11 +63,15 @@ namespace AppLogger.Controls
         /// Trata os dados recebidos em forma de entidade e os devolve em formato de um lista de atributos
         /// </summary>
         /// <returns>Retorna uma lista com os atributos antigos e novos das entidades.</returns>
-        /// <param name="type">Object type.</param>
         /// <param name="objects">Original entity.</param>
-        public static IEnumerable<EntityAttribute> GetListAttributes(Type type, params object[] objects)
+        public static IEnumerable<EntityAttribute> GetListAttributes(params object[] objects)
         {
-            IEnumerable<PropertyInfo> properties = type
+            if (!objects.All(o => o.GetType() == objects.First().GetType()))
+            {
+                throw new DifferentObjectsTypeException();
+            }
+
+            IEnumerable<PropertyInfo> properties = objects.First().GetType()
                 .GetProperties()
                 .Where(p => p.PropertyType.Namespace == "System");
 
