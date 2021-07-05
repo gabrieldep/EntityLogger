@@ -46,7 +46,7 @@ namespace AppLogger.Controls
             EntityState logType = changeInfo.State;
 
             object oldObj = GetOldObject(changeInfo);
-            object newObj = changeInfo.CurrentValues.ToObject();
+            object newObj = GetNewObject(changeInfo);
 
             Type type = changeInfo.Entity.GetType();
 
@@ -142,11 +142,24 @@ namespace AppLogger.Controls
             }
         }
 
-        internal object GetOldObject(EntityEntry entityEntry)
+        /// <summary>
+        /// Recupera o objeto antes da alteração caso ele exista
+        /// </summary>
+        /// <param name="entityEntry">EntityEntry com a informação.</param>
+        internal static object GetOldObject(EntityEntry entityEntry)
         {
             return entityEntry.State != EntityState.Added ?
                       entityEntry.GetDatabaseValues().ToObject()
                       : null;
+        }
+
+        /// <summary>
+        /// Recupera o objeto novo
+        /// </summary>
+        /// <param name="entityEntry">EntityEntry com a informação.</param>
+        internal static object GetNewObject(EntityEntry entityEntry)
+        {
+            return entityEntry.CurrentValues.ToObject();
         }
 
     }
