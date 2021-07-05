@@ -122,16 +122,13 @@ namespace AppLogger.Controls
         /// <summary>
         /// Lista de Logs de um determinado Objeto do banco de dados
         /// </summary>
-        /// <param name="type">Entity type name.</param>
         /// <param name="idEntity">Entity Id.</param>
         /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
-        public IEnumerable<LogBase> GetEntityLogBaseList(string type, int idEntity)
+        public IEnumerable<LogBase> GetEntityLogBaseList(int idEntity)
         {
             return _context.LogsBase
                 .Include(lb => lb.EntitiesAttributes)
-                .Where(lb => lb.EntitiesAttributes.Any(a =>
-                    a.PropertyName == "Id" || a.PropertyName == "Id" + type
-                    && a.Value == idEntity.ToString()));
+                .Where(lb => lb.ForeignKey == idEntity);
         }
 
         /// <summary>
@@ -159,15 +156,22 @@ namespace AppLogger.Controls
         /// <param name="obj">Object to get the foreing key.</param>
         public int GetForeingKey(object obj)
         {
-            string keyName = _context.Model
+            return (int)obj.GetType()
+                .GetProperty(GetForeingKeyName(obj))
+                .GetValue(obj, null);
+        }
+
+        /// <summary>
+        /// Pegar nome da chave estrangeira
+        /// </summary>
+        /// <param name="obj">Object to get the foreing key name.</param>
+        public string GetForeingKeyName(object obj)
+        {
+            return _context.Model
                 .FindEntityType(obj.GetType())
                 .FindPrimaryKey().Properties
                 .Select(x => x.Name)
                 .Single();
-
-            return (int)obj.GetType()
-                .GetProperty(keyName)
-                .GetValue(obj, null);
         }
     }
 }
