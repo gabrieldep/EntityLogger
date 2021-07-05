@@ -44,11 +44,10 @@ namespace AppLogger.Controls
         public async Task AddLogAsync(EntityEntry changeInfo)
         {
             EntityState logType = changeInfo.State;
-            object oldObj =
-                logType != EntityState.Added ?
-                    changeInfo.GetDatabaseValues().ToObject()
-                    : null;
+
+            object oldObj = GetOldObject(changeInfo);
             object newObj = changeInfo.CurrentValues.ToObject();
+
             Type type = changeInfo.Entity.GetType();
 
             LogBase log = new()
@@ -58,7 +57,7 @@ namespace AppLogger.Controls
                 EntityType = type,
                 User = _user,
                 EntitiesAttributes = GetListAttributes(oldObj, newObj, type, logType).ToList(),
-                ForeignKey = _context.GetForeingKey(oldObj ?? newObj)
+                ForeignKey = _context.GetForeingKey(newObj ?? oldObj)
             };
             await _context.LogsBase.AddAsync(log);
         }
@@ -148,6 +147,13 @@ namespace AppLogger.Controls
                     .GetProperty(attribute.PropertyName)
                     .SetValue(objectT, Convert.ChangeType(attribute.Value, attribute.Type));
             }
+        }
+
+        internal object GetOldObject(EntityEntry entityEntry)
+        {
+            return entityEntry.State != EntityState.Added ?
+                      entityEntry.GetDatabaseValues().ToObject()
+                      : null;
         }
 
     }
