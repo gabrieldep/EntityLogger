@@ -14,5 +14,6 @@ namespace AppLogger.Exceptions
         public DifferentObjectsTypeException(string message, Exception inner) : base(message, inner) { }
 
         protected DifferentObjectsTypeException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+
     }
 }

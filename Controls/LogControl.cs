@@ -65,32 +65,21 @@ namespace AppLogger.Controls
         /// <returns>Retorna uma lista com os atributos antigos e novos das entidades.</returns>
         /// <param name="objects">Array wiht objects to get the EntityAttributes.</param>
         /// <exception cref="DifferentObjectsTypeException">Se o Array tiver dois objetos com tipos diferentes.</exception>
-        public static IEnumerable<EntityAttribute> GetListAttributes(params object[] objects)
+        public static IEnumerable<EntityAttribute> GetListAttributes<T>(params T[] objects)
         {
-            Type type = objects.First().GetType();
-            if (!objects.All(o => o.GetType() == type))
-            {
-                throw new DifferentObjectsTypeException("There are objects with different types in the array.");
-            }
-
-            IEnumerable<PropertyInfo> properties = type
+            IEnumerable<PropertyInfo> properties = objects.First().GetType()
                 .GetProperties()
                 .Where(p => p.PropertyType.Namespace == "System");
 
-            List<EntityAttribute> entitiesAttributes = new();
-
-            foreach (object obj in objects)
-            {
-                entitiesAttributes.AddRange(properties
-                   .Select(p => new EntityAttribute
-                   {
-                       EntityType = Enums.EntityType.Old,
-                       Type = p.PropertyType,
-                       PropertyName = p.Name,
-                       Value = p.GetValue(obj)?.ToString()
-                   }));
-            }
-            return entitiesAttributes;
+            return objects
+                .SelectMany(obj => properties
+                    .Select(p => new EntityAttribute
+                    {
+                        EntityType = Enums.EntityType.Old,
+                        Type = p.PropertyType,
+                        PropertyName = p.Name,
+                        Value = p.GetValue(obj)?.ToString()
+                    }));
         }
 
         /// <summary>
