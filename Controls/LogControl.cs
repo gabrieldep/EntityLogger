@@ -67,7 +67,13 @@ namespace AppLogger.Controls
         /// <exception cref="DifferentObjectsTypeException">Se o Array tiver dois objetos com tipos diferentes.</exception>
         public static IEnumerable<EntityAttribute> GetListAttributes<T>(params T[] objects)
         {
-            IEnumerable<PropertyInfo> properties = objects.First().GetType()
+            Type type = objects.First().GetType();
+            if (objects.Any(o => o.GetType() != type))
+            {
+                throw new DifferentObjectsTypeException("There are objects with different types in the array.", new TargetException("Object does not match target type."));
+            }
+
+            IEnumerable<PropertyInfo> properties = type
                 .GetProperties()
                 .Where(p => p.PropertyType.Namespace == "System");
 
