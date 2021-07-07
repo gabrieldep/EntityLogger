@@ -15,13 +15,10 @@ namespace AppLogger.Model
 
         public DateTime DateTime { get; set; }
         public string User { get; set; }
-
         public int ForeignKey { get; set; }
+        public Type EntityType { get; set; }
+        public EntityState EntityLogState { get; set; }
 
         public ICollection<EntityAttribute> EntitiesAttributes { get; set; }
-
-        public Type EntityType { get; set; }
-
-        public EntityState EntityLogState { get; set; }
-    }   
+    }
 }
