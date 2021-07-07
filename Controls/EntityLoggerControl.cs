@@ -45,24 +45,5 @@ namespace AppLogger.Controls
                 .Include(lb => lb.EntitiesAttributes)
                 .Where(lb => lb.ForeignKey == idEntity);
         }
-
-        /// <summary>
-        /// Cria o objeto do tipo T a partir do log.
-        /// </summary>
-        /// <param name="logBase">LogBase to reconstruct the objetct.</param>
-        /// <param name="entityType">Enum EntityType.</param>
-        /// <param name="objectT">Object to be reconstruct.</param>
-        public static void CreateEntity<T>(LogBase logBase, Enums.EntityType entityType, ref T objectT)
-        {
-            IEnumerable<EntityAttribute> attributes = logBase.EntitiesAttributes
-                .Where(a => a.EntityType == entityType);
-            foreach (EntityAttribute attribute in attributes)
-            {
-                objectT
-                    .GetType()
-                    .GetProperty(attribute.PropertyName)
-                    .SetValue(objectT, Convert.ChangeType(attribute.Value, attribute.Type));
-            }
-        }
     }
 }
