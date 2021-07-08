@@ -73,9 +73,7 @@ namespace AppLogger.Controls
                 throw new DifferentObjectsTypeException("There are objects with different types in the array.", new TargetException("Object does not match target type."));
             }
 
-            IEnumerable<PropertyInfo> properties = type
-                .GetProperties()
-                .Where(p => p.PropertyType.Namespace == "System");
+            IEnumerable<PropertyInfo> properties = GetSystemsProperties(type);
 
             return objects
                 .SelectMany(obj => properties
@@ -99,5 +97,11 @@ namespace AppLogger.Controls
         /// </summary>
         /// <param name="entityEntry">EntityEntry com a informação.</param>
         internal static object GetNewObject(EntityEntry entityEntry) => entityEntry.CurrentValues.ToObject();
+
+        /// <summary>
+        /// Recupera a lista de propriedades nativas do C# de determinado tipo
+        /// </summary>
+        /// <param name="type">Tipo de onde virão as propriedades.</param>
+        internal static IEnumerable<PropertyInfo> GetSystemsProperties(Type type) => type.GetProperties().Where(p => p.PropertyType.Namespace == "System");
     }
 }

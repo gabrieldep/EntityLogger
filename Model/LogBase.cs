@@ -27,7 +27,6 @@ namespace AppLogger.Model
         /// Cria o objeto do tipo T a partir do log.
         /// </summary>
         /// <param name="entityType">Enum EntityType.</param>
-        /// <param name="objectT">Object to be reconstruct.</param>
         public T CreateEntity<T>(Enums.EntityType entityType) where T : new()
         {
             IEnumerable<EntityAttribute> attributes = EntitiesAttributes
