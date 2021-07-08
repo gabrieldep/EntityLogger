@@ -92,20 +92,12 @@ namespace AppLogger.Controls
         /// Recupera o objeto antes da alteração caso ele exista
         /// </summary>
         /// <param name="entityEntry">EntityEntry com a informação.</param>
-        internal static object GetOldObject(EntityEntry entityEntry)
-        {
-            return entityEntry.State != EntityState.Added ?
-                      entityEntry.GetDatabaseValues().ToObject()
-                      : null;
-        }
+        internal static object GetOldObject(EntityEntry entityEntry) => entityEntry.State != EntityState.Added ? entityEntry.GetDatabaseValues().ToObject() : null;
 
         /// <summary>
         /// Recupera o objeto novo
         /// </summary>
         /// <param name="entityEntry">EntityEntry com a informação.</param>
-        internal static object GetNewObject(EntityEntry entityEntry)
-        {
-            return entityEntry.CurrentValues.ToObject();
-        }
+        internal static object GetNewObject(EntityEntry entityEntry) => entityEntry.CurrentValues.ToObject();
     }
 }
