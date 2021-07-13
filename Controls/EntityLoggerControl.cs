@@ -39,11 +39,12 @@ namespace AppLogger.Controls
         /// </summary>
         /// <param name="idEntity">Entity Id.</param>
         /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
-        public IEnumerable<LogBase> GetEntityLogBaseList(int idEntity)
+        public IEnumerable<LogBase> GetEntityLogBaseList(int idEntity, Type type)
         {
             return _context.LogsBase
                 .Include(lb => lb.EntitiesAttributes)
-                .Where(lb => lb.ForeignKey == idEntity);
+                .Where(lb => lb.ForeignKey == idEntity)
+                .ToList().Where(lb => lb.EntityType == type);
         }
     }
 }
