@@ -23,14 +23,14 @@ namespace AppLogger.Controls
         /// <param name="end">End date time.</param>
         /// <param name="enumEntityState">Enum LogType.</param>
         /// <param name="type">Entity type.</param>
-        public IEnumerable<LogBase> GetLogBaseList(DateTime start, DateTime end, int enumEntityState, Type type)
+        public IEnumerable<LogBase> GetLogBaseList(DateTime start, DateTime end, EntityState? enumEntityState, Type type)
         {
             return _context.LogsBase
                 .Include(lb => lb.EntitiesAttributes)
                 .Where(lb =>
                     (start == DateTime.MinValue || lb.DateTime >= start)
                     && (end == DateTime.MinValue || lb.DateTime <= end)
-                    && (enumEntityState == -1 || lb.EntityLogState == (EntityState)enumEntityState)).ToList()
+                    && (enumEntityState == null || lb.EntityLogState == enumEntityState)).ToList()
                     .Where(lb => type == null || lb.EntityType == type);
         }
 
