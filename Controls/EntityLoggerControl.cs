@@ -46,5 +46,29 @@ namespace AppLogger.Controls
                 .Where(lb => lb.ForeignKey == idEntity)
                 .ToList().Where(lb => lb.EntityType == type);
         }
+
+        /// <summary>
+        /// Compara dois objetos para verificar se os atributos são identicos;
+        /// </summary>
+        /// <returns>Retorna true caso os objetos sejam iguais e false caso sejam diferentes.</returns>
+
+        public static bool IsEqual(object primeiro, object segundo)
+        {
+            if (primeiro.GetType() != segundo.GetType())
+            {
+                return false;
+            }
+            var propriedades = LogControl.GetSystemsProperties(primeiro.GetType());
+            foreach (var property in propriedades)
+            {
+                object i = property.GetValue(primeiro);
+                object j = property.GetValue(segundo);
+                if (i.ToString() != j.ToString())
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
