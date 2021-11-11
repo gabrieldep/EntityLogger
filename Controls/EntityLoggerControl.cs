@@ -46,5 +46,17 @@ namespace AppLogger.Controls
                 .Where(lb => lb.ForeignKey == idEntity)
                 .ToList().Where(lb => lb.EntityType == type);
         }
+
+        /// <summary>
+        /// Lista do ultimo log de um determinado Objeto do banco de dados
+        /// </summary>
+        /// <param name="idEntity">Entity Id.</param>
+        /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
+        public LogBase GetLastEntityLogBase(int idEntity, Type type)
+        {
+            return _context.LogsBase
+                .Where(lb => lb.ForeignKey == idEntity)
+                .ToList().Last(lb => lb.EntityType == type);
+        }
     }
 }
