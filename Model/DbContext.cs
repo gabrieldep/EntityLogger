@@ -70,6 +70,73 @@ namespace AppLogger.Model
         }
 
         /// <summary>
+        /// Salva alterações de Criação de entidades e Loga, com informacoes de DataHora e quem realizou a operação.
+        /// This method will automatically call Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker.DetectChanges
+        /// to discover any changes to entity instances before saving to the underlying database and log it.
+        /// </summary>
+        /// <param name="user">String to identify who did the action.</param>
+        /// <returns> A task that represents the asynchronous save operation. The task result contains the number of state entries written to the database.</returns>
+        public async Task<int> SaveChangesCreateAsync(string user)
+        {
+            IReadOnlyCollection<EntityEntry> entries = ChangeTracker
+                 .Entries()
+                 .Where(t =>
+                     t.State == EntityState.Modified ||
+                     t.State == EntityState.Deleted ||
+                     t.State == EntityState.Added)
+                 .ToList().AsReadOnly();
+            if (entries.Any(e => e.State != EntityState.Added))
+            {
+                return 0;
+            }
+            int i = await base.SaveChangesAsync();
+            foreach (var item in entries)
+            {
+                item.State = EntityState.Added;
+            }
+            await new LogControl(this, user).AddLogsAsync(entries);
+            foreach (var item in entries)
+            {
+                item.State = EntityState.Unchanged;
+            }
+            return await base.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Salva alterações de entidades e Loga apenas as entidades solicitadas, com informacoes de DataHora e quem realizou a operação.
+        /// This method will automatically call Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker.DetectChanges
+        /// to discover any changes to entity instances before saving to the underlying database and log it.
+        /// </summary>
+        /// <param name="user">String to identify who did the action.</param>
+        /// <param name="objetos">Objetos a serem logados.</param>
+        /// <returns> A task that represents the asynchronous save operation. The task result contains the number of state entries written to the database.</returns>
+
+        public async Task<int> SaveChangesAsync(string user, params object[] objetos)
+        {
+            IReadOnlyCollection<EntityEntry> entries = ChangeTracker
+                 .Entries()
+                 .Where(t =>
+                     t.State == EntityState.Modified ||
+                     t.State == EntityState.Deleted ||
+                     t.State == EntityState.Added)
+                 .ToList().AsReadOnly();
+            IList<EntityEntry> entrysLog = new List<EntityEntry>();
+            foreach (var item in entries)
+            {
+                foreach (var objeto in objetos)
+                {
+                    if (EntityLoggerControl.Equals(item.CurrentValues.ToObject(), objeto))
+                    {
+                        entrysLog.Add(item);
+                    }
+                }
+            }
+
+            await new LogControl(this, user).AddLogsAsync(entrysLog);
+            return await base.SaveChangesAsync();
+        }
+
+        /// <summary>
         /// Pegar chave estrangeira
         /// </summary>
         /// <param name="obj">Object to get the foreing key.</param>
