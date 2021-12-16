@@ -76,11 +76,7 @@ namespace AppLogger.Controls
         /// </summary>
         /// <param name="idEntity">Entity Id.</param>
         /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
-        public LogBase GetLastEntityLogBase(int idEntity, Type type)
-        {
-            return _context.LogsBase
-                .Where(lb => lb.ForeignKey == idEntity)
-                .ToList().Last(lb => lb.EntityType == type);
-        }
+        public LogBase GetLastEntityLogBase(int idEntity, Type type) => _context.LogsBase.Where(lb => lb.ForeignKey == idEntity)
+            .ToList().Last(lb => lb.EntityType == type);
     }
 }
