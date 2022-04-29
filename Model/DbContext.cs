@@ -126,9 +126,7 @@ namespace AppLogger.Model
                 foreach (var objeto in objetos)
                 {
                     if (EntityLoggerControl.Equals(item.CurrentValues.ToObject(), objeto))
-                    {
                         entrysLog.Add(item);
-                    }
                 }
             }
 
