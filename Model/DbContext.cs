@@ -138,24 +138,18 @@ namespace AppLogger.Model
         /// Pegar chave estrangeira
         /// </summary>
         /// <param name="obj">Object to get the foreing key.</param>
-        public int GetForeingKey(object obj)
-        {
-            return (int)obj.GetType()
+        public int GetForeingKey(object obj) => (int)obj.GetType()
                 .GetProperty(GetForeingKeyName(obj))
                 .GetValue(obj, null);
-        }
 
         /// <summary>
         /// Pegar nome da chave estrangeira
         /// </summary>
         /// <param name="obj">Object to get the foreing key name.</param>
-        public string GetForeingKeyName(object obj)
-        {
-            return Model
+        public string GetForeingKeyName(object obj) => Model
                 .FindEntityType(obj.GetType())
                 .FindPrimaryKey().Properties
                 .Select(p => p.Name)
                 .SingleOrDefault();
-        }
     }
 }

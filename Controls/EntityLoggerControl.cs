@@ -39,13 +39,10 @@ namespace AppLogger.Controls
         /// </summary>
         /// <param name="idEntity">Entity Id.</param>
         /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
-        public IEnumerable<LogBase> GetEntityLogBaseList(int idEntity, Type type)
-        {
-            return _context.LogsBase
+        public IEnumerable<LogBase> GetEntityLogBaseList(int idEntity, Type type) => _context.LogsBase
                 .Include(lb => lb.EntitiesAttributes)
                 .Where(lb => lb.ForeignKey == idEntity)
                 .ToList().Where(lb => lb.EntityType == type);
-        }
 
         /// <summary>
         /// Compara dois objetos para verificar se os atributos são identicos;
@@ -55,18 +52,15 @@ namespace AppLogger.Controls
         public static new bool Equals(object primeiro, object segundo)
         {
             if (primeiro.GetType() != segundo.GetType())
-            {
                 return false;
-            }
+
             var propriedades = LogControl.GetSystemsProperties(primeiro.GetType());
             foreach (var property in propriedades)
             {
                 object i = property.GetValue(primeiro);
                 object j = property.GetValue(segundo);
                 if (i.ToString() != j.ToString())
-                {
                     return false;
-                }
             }
             return true;
         }

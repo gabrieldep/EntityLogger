@@ -34,9 +34,7 @@ namespace AppLogger.Model
             T objectT = new();
             foreach (EntityAttribute attribute in attributes)
             {
-                objectT
-                    .GetType()
-                    .GetProperty(attribute.PropertyName)
+                objectT.GetType().GetProperty(attribute.PropertyName)
                     .SetValue(objectT, Convert.ChangeType(attribute.Value, attribute.Type));
             }
             return objectT;

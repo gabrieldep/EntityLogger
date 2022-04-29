@@ -39,18 +39,14 @@ namespace AppLogger.Controls
         /// <param name="changeInfo">EntityEntry with change tracking information.</param>
         public async Task AddLogAsync(EntityEntry changeInfo)
         {
-            EntityState logType = changeInfo.State;
-
             object oldObj = GetOldObject(changeInfo);
             object newObj = GetNewObject(changeInfo);
 
-            Type type = changeInfo.Entity.GetType();
-
             LogBase log = new()
             {
-                EntityLogState = logType,
+                EntityLogState = changeInfo.State,
                 DateTime = DateTime.Now,
-                EntityType = type,
+                EntityType = changeInfo.Entity.GetType(),
                 User = _user,
                 EntitiesAttributes = (oldObj == null ?
                         GetListAttributes(newObj) : GetListAttributes(newObj, oldObj)).ToList(),
@@ -69,12 +65,9 @@ namespace AppLogger.Controls
         {
             Type type = objects.First().GetType();
             if (objects.Any(o => o.GetType() != type))
-            {
-                throw new DifferentObjectsTypeException("There are objects with different types in the array.", new TargetException("Object does not match target type."));
-            }
+                throw new DifferentObjectsTypeException("There are objects with different types in the array.", new("Object does not match target type."));
 
             IEnumerable<PropertyInfo> properties = GetSystemsProperties(type);
-
             return objects
                 .SelectMany(obj => properties
                     .Select(p => new EntityAttribute
