@@ -48,8 +48,7 @@ namespace AppLogger.Controls
                 DateTime = DateTime.Now,
                 EntityType = changeInfo.Entity.GetType(),
                 User = _user,
-                EntitiesAttributes = (oldObj == null ?
-                        GetListAttributes(newObj) : GetListAttributes(newObj, oldObj)).ToList(),
+                EntitiesAttributes = GetListAttributes(newObj, oldObj ?? null).ToList(),
                 ForeignKey = _context.GetForeingKey(newObj ?? oldObj)
             };
             await _context.LogsBase.AddAsync(log);
@@ -61,15 +60,14 @@ namespace AppLogger.Controls
         /// <returns>Retorna uma lista com os atributos antigos e novos das entidades.</returns>
         /// <param name="objects">Array wiht objects to get the EntityAttributes.</param>
         /// <exception cref="DifferentObjectsTypeException">Se o Array tiver dois objetos com tipos diferentes.</exception>
-        public static IEnumerable<EntityAttribute> GetListAttributes<T>(params T[] objects)
+        public static IEnumerable<EntityAttribute> GetListAttributes(params object[] objects)
         {
-            Type type = objects.First().GetType();
+            Type type = objects?.First().GetType();
             if (objects.Any(o => o.GetType() != type))
                 throw new DifferentObjectsTypeException("There are objects with different types in the array.", new("Object does not match target type."));
 
             IEnumerable<PropertyInfo> properties = GetSystemsProperties(type);
-            return objects
-                .SelectMany(obj => properties
+            return objects.SelectMany(obj => properties
                     .Select(p => new EntityAttribute
                     {
                         EntityType = Enums.EntityType.Old,
