@@ -13,6 +13,7 @@ namespace AppLogger.Model
         {
             EntitiesAttributes = new HashSet<EntityAttribute>();
         }
+
         public int Id { get; set; }
 
         public DateTime DateTime { get; set; }
@@ -33,10 +34,8 @@ namespace AppLogger.Model
                .Where(a => a.EntityType == entityType);
             T objectT = new();
             foreach (EntityAttribute attribute in attributes)
-            {
                 objectT.GetType().GetProperty(attribute.PropertyName)
                     .SetValue(objectT, Convert.ChangeType(attribute.Value, attribute.Type));
-            }
             return objectT;
         }
     }

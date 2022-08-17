@@ -86,19 +86,13 @@ namespace AppLogger.Model
                      t.State == EntityState.Added)
                  .ToList().AsReadOnly();
             if (entries.Any(e => e.State != EntityState.Added))
-            {
                 return 0;
-            }
             int i = await base.SaveChangesAsync();
             foreach (var item in entries)
-            {
                 item.State = EntityState.Added;
-            }
             await new LogControl(this, user).AddLogsAsync(entries);
             foreach (var item in entries)
-            {
                 item.State = EntityState.Unchanged;
-            }
             return await base.SaveChangesAsync();
         }
 
@@ -122,13 +116,9 @@ namespace AppLogger.Model
                  .ToList().AsReadOnly();
             IList<EntityEntry> entrysLog = new List<EntityEntry>();
             foreach (var item in entries)
-            {
                 foreach (var objeto in objetos)
-                {
                     if (EntityLoggerControl.Equals(item.CurrentValues.ToObject(), objeto))
                         entrysLog.Add(item);
-                }
-            }
 
             await new LogControl(this, user).AddLogsAsync(entrysLog);
             return await base.SaveChangesAsync();

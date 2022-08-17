@@ -28,9 +28,7 @@ namespace AppLogger.Controls
         public async Task AddLogsAsync(IEnumerable<EntityEntry> entityEntries)
         {
             foreach (EntityEntry entityEntry in entityEntries)
-            {
                 await AddLogAsync(entityEntry);
-            }
         }
 
         /// <summary>
