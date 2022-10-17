@@ -25,12 +25,12 @@ namespace AppLogger.Model
         public ICollection<EntityAttribute> EntitiesAttributes { get; set; }
 
         /// <summary>
-        /// Cria o objeto do tipo T a partir do log.
+        /// Crate an object from this log
         /// </summary>
         /// <param name="entityType">Enum EntityType.</param>
         public T CreateEntity<T>(Enums.EntityType entityType) where T : new()
         {
-            IEnumerable<EntityAttribute> attributes = EntitiesAttributes
+            var attributes = EntitiesAttributes
                .Where(a => a.EntityType == entityType);
             T objectT = new();
             foreach (EntityAttribute attribute in attributes)

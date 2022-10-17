@@ -58,7 +58,7 @@ namespace AppLogger.Model
         /// <returns> A task that represents the asynchronous save operation. The task result contains the number of state entries written to the database.</returns>
         public async Task<int> SaveChangesAsync(string user)
         {
-            IReadOnlyCollection<EntityEntry> entries = ChangeTracker
+            var entries = ChangeTracker
                  .Entries()
                  .Where(t =>
                      t.State == EntityState.Modified ||
@@ -78,7 +78,7 @@ namespace AppLogger.Model
         /// <returns> A task that represents the asynchronous save operation. The task result contains the number of state entries written to the database.</returns>
         public async Task<int> SaveChangesCreateAsync(string user)
         {
-            IReadOnlyCollection<EntityEntry> entries = ChangeTracker
+            var entries = ChangeTracker
                  .Entries()
                  .Where(t =>
                      t.State == EntityState.Modified ||
@@ -107,14 +107,14 @@ namespace AppLogger.Model
 
         public async Task<int> SaveChangesAsync(string user, params object[] objetos)
         {
-            IReadOnlyCollection<EntityEntry> entries = ChangeTracker
+            var entries = ChangeTracker
                  .Entries()
                  .Where(t =>
                      t.State == EntityState.Modified ||
                      t.State == EntityState.Deleted ||
                      t.State == EntityState.Added)
                  .ToList().AsReadOnly();
-            IList<EntityEntry> entrysLog = new List<EntityEntry>();
+            var entrysLog = new List<EntityEntry>();
             foreach (var item in entries)
                 foreach (var obj in objetos)
                     if (EntityLoggerControl.Equals(item.CurrentValues.ToObject(), obj))

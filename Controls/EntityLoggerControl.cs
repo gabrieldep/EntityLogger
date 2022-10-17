@@ -57,8 +57,8 @@ namespace AppLogger.Controls
             var propriedades = LogControl.GetSystemsProperties(primeiro.GetType());
             foreach (var property in propriedades)
             {
-                object i = property.GetValue(primeiro);
-                object j = property.GetValue(segundo);
+                var i = property.GetValue(primeiro);
+                var j = property.GetValue(segundo);
                 if (i.ToString() != j.ToString())
                     return false;
             }
