@@ -16,13 +16,13 @@ namespace AppLogger.Controls
         }
 
         /// <summary>
-        /// Lista de Logs baseada nos parametros
+        /// Get a log list filtered by parameters
         /// </summary>
-        /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
         /// <param name="start">Start date time.</param>
         /// <param name="end">End date time.</param>
         /// <param name="enumEntityState">Enum LogType.</param>
         /// <param name="type">Entity type.</param>
+        /// <returns>An IEnumerable with logs.</returns>
         public IEnumerable<LogBase> GetLogBaseList(DateTime start, DateTime end, EntityState? enumEntityState, Type type)
         {
             return _context.LogsBase
@@ -35,19 +35,19 @@ namespace AppLogger.Controls
         }
 
         /// <summary>
-        /// Lista de Logs de um determinado Objeto do banco de dados
+        /// Get a log list from an object
         /// </summary>
         /// <param name="idEntity">Entity Id.</param>
-        /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
+        /// <returns>An IEnumerable with logs.</returns>
         public IEnumerable<LogBase> GetEntityLogBaseList(int idEntity, Type type) => _context.LogsBase
                 .Include(lb => lb.EntitiesAttributes)
                 .Where(lb => lb.ForeignKey == idEntity)
                 .ToList().Where(lb => lb.EntityType == type);
 
         /// <summary>
-        /// Compara dois objetos para verificar se os atributos são identicos;
+        /// Compare two objects
         /// </summary>
-        /// <returns>Retorna true caso os objetos sejam iguais e false caso sejam diferentes.</returns>
+        /// <returns>True if the objects are equal, otherwise, returns false.</returns>
 
         public static new bool Equals(object primeiro, object segundo)
         {
@@ -66,10 +66,10 @@ namespace AppLogger.Controls
         }
 
         /// <summary>
-        /// Lista do ultimo log de um determinado Objeto do banco de dados
+        /// Get last log from an entity.
         /// </summary>
         /// <param name="idEntity">Entity Id.</param>
-        /// <returns>Retorna um IEnumreable com os logs baseado nos parametros.</returns>
+        /// <returns>Last log from this object.</returns>
         public LogBase GetLastEntityLogBase(int idEntity, Type type) => _context.LogsBase
             .Where(lb => lb.ForeignKey == idEntity)
             .ToList()?.Last(lb => lb.EntityType == type);
