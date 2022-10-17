@@ -53,11 +53,11 @@ namespace AppLogger.Controls
         }
 
         /// <summary>
-        /// Trata os dados recebidos em forma de entidade e os devolve em formato de um lista de atributos
+        /// Get the properties from objects
         /// </summary>
-        /// <returns>Retorna uma lista com os atributos antigos e novos das entidades.</returns>
         /// <param name="objects">Array wiht objects to get the EntityAttributes.</param>
-        /// <exception cref="DifferentObjectsTypeException">Se o Array tiver dois objetos com tipos diferentes.</exception>
+        /// <exception cref="DifferentObjectsTypeException">If the objects array have objects from different types.</exception>
+        /// <returns>Attributes list from all objects passed as parameter.</returns>
         public static IEnumerable<EntityAttribute> GetListAttributes(params object[] objects)
         {
             Type type = objects?.First().GetType();
@@ -76,21 +76,21 @@ namespace AppLogger.Controls
         }
 
         /// <summary>
-        /// Recupera o objeto antes da alteração caso ele exista
+        /// Get the object before the db operation
         /// </summary>
-        /// <param name="entityEntry">EntityEntry com a informação.</param>
+        /// <param name="entityEntry">EntityEntry with the dbOperation.</param>
         internal static object GetOldObject(EntityEntry entityEntry) => entityEntry.State != EntityState.Added ? entityEntry.GetDatabaseValues().ToObject() : null;
 
         /// <summary>
-        /// Recupera o objeto novo
+        /// Get the object after the db operation
         /// </summary>
-        /// <param name="entityEntry">EntityEntry com a informação.</param>
+        /// <param name="entityEntry">EntityEntry with the dbOperation.</param>
         internal static object GetNewObject(EntityEntry entityEntry) => entityEntry.CurrentValues.ToObject();
 
         /// <summary>
-        /// Recupera a lista de propriedades nativas do C# de determinado tipo
+        /// Get all native attributes from a type.
         /// </summary>
-        /// <param name="type">Tipo de onde virão as propriedades.</param>
+        /// <param name="type">Type to get the attributes.</param>
         internal static IEnumerable<PropertyInfo> GetSystemsProperties(Type type) => type.GetProperties().Where(p => p.PropertyType.Namespace == "System");
     }
 }

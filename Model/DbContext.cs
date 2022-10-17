@@ -116,8 +116,8 @@ namespace AppLogger.Model
                  .ToList().AsReadOnly();
             IList<EntityEntry> entrysLog = new List<EntityEntry>();
             foreach (var item in entries)
-                foreach (var objeto in objetos)
-                    if (EntityLoggerControl.Equals(item.CurrentValues.ToObject(), objeto))
+                foreach (var obj in objetos)
+                    if (EntityLoggerControl.Equals(item.CurrentValues.ToObject(), obj))
                         entrysLog.Add(item);
 
             await new LogControl(this, user).AddLogsAsync(entrysLog);
@@ -125,19 +125,19 @@ namespace AppLogger.Model
         }
 
         /// <summary>
-        /// Pegar chave estrangeira
+        /// Get the foreign key from an object.
         /// </summary>
         /// <param name="obj">Object to get the foreing key.</param>
         public int GetForeingKey(object obj) => (int)obj.GetType()
-                .GetProperty(GetForeingKeyName(obj))
+                .GetProperty(GetForeingKeyName(obj.GetType()))
                 .GetValue(obj, null);
 
         /// <summary>
-        /// Pegar nome da chave estrangeira
+        /// Get foreign key name from an object.
         /// </summary>
         /// <param name="obj">Object to get the foreing key name.</param>
-        public string GetForeingKeyName(object obj) => Model
-                .FindEntityType(obj.GetType())
+        public string GetForeingKeyName(Type type) => Model
+                .FindEntityType(type)
                 .FindPrimaryKey().Properties
                 .Select(p => p.Name)
                 .SingleOrDefault();
